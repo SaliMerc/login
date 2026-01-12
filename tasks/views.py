@@ -2,7 +2,7 @@ from .models import Task
 from .forms import *
 
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import authenticate, login, get_user_model, logout, update_session_auth_hash
 from django.contrib import messages
 
 
@@ -119,3 +119,67 @@ def member_login(request):
         form = MemberLoginForm()
 
     return render(request, 'users/login.html', {'form': form})
+
+def member_info(request):
+    return render(request, 'users/member-info.html', {'user': request.user})
+
+def logout_view(request):
+    logout(request)
+    return redirect('tasks:index')
+
+def delete_member_page(request):
+    return render(request, 'users/cancel-member.html')
+
+def delete_member(request):
+    try:
+        user = request.user
+        user.delete()         
+
+        messages.success(request, 'Your account has been deleted successfully.')
+        return redirect('tasks:index')
+
+    except Exception:
+        messages.error(request, 'An error occurred while deleting your account.')
+        return redirect('tasks:member_info')
+
+
+def profile_update(request):
+    if request.method == 'POST':
+        form = MemberUpdateForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('tasks:member_info') 
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = MemberUpdateForm(instance=request.user)
+
+    return render(request, 'users/member-edit.html', {'form': form})
+
+def password_change(request):
+    if request.method == 'POST':
+        form = MemberPasswordChangeForm(request.POST)
+
+        if form.is_valid():
+            old_password = form.cleaned_data['old_password']
+            new_password = form.cleaned_data['new_password']
+            confirm_new_password = form.cleaned_data['confirm_new_password']
+
+            user = request.user
+            if not user.check_password(old_password):
+                messages.error(request, 'Current password is incorrect.')
+            elif new_password != confirm_new_password:
+                messages.error(request, 'New passwords do not match.')
+            else:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user) 
+                messages.success(request, 'Password changed successfully.')
+                return redirect('tasks:member_info')  
+
+    else:
+        form = MemberPasswordChangeForm()
+
+    return render(request, 'users/password-change.html', {'form': form})

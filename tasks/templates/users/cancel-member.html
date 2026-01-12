@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Cancellation page</h1>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">
+                {{ message }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<p>Username: {{ user.username }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Age: {{ user.age }}</p>
+
+<div>
+  <a href="{% url 'tasks:remove_member' %}">Cancel your membership</a>
+</div>  
+
+
+
+<br>
+
+<a href="{% url 'tasks:index' %}">戻る</a>
+{% endblock %}  

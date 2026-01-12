@@ -15,9 +15,12 @@
           <a href="{% url 'tasks:registration' %}">Membership registration</a>
         </li>
         <li><a href="{% url 'tasks:login' %}">Log in</a></li>
-        <li><a href="{% url 'tasks:index' %}">Membership Information</a></li>
+
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'tasks:member_info' %}">Membership Information</a></li>
         <li><a href="{% url 'tasks:index' %}">Task List</a></li>
-        <li><a href="{% url 'tasks:index' %}">Logout</a></li>
+        <li><a href="{% url 'tasks:logout' %}">Logout</a></li>
+        {% endif %}
       </ul>
     </nav>
     <main>

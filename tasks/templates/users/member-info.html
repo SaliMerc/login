@@ -1,0 +1,16 @@
+{% extends "base.html" %} {% block main %}
+<h1>Membership details page</h1>
+
+<p>Username: {{ user.username }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Age: {{ user.age }}</p>
+
+<div>
+  <a href="{% url 'tasks:update_member' %}">Edit</a>
+  <a href="{% url 'tasks:password_change' %}">Change your password</a>
+</div>
+
+<br />
+
+<a href="{% url 'tasks:index' %}">戻る</a>
+{% endblock %}
